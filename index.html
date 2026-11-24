@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026년 47주차 아이템매니아 마케팅 코어 인덱스</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg:#FAFBFC; --surface:#FFFFFF;
+    --navy:#0C1B2A; --navy-light:#1E3A5F;
+    --blue:#0056B3; --blue-light:#E8F0FB;
+    --red:#E74C3C; --red-light:#FDECEA;
+    --green:#27AE60; --green-light:#E8F8F0;
+    --gray:#6C757D; --gray-light:#F0F2F5;
+    --border:#E2E8F0;
+    --shadow:0 2px 12px rgba(12,27,42,.08);
+    --shadow-hover:0 8px 28px rgba(12,27,42,.14);
+    --radius:14px; --radius-sm:8px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--navy);min-height:100vh;padding-bottom:80px;}
+  .header{background:linear-gradient(135deg,#0C1B2A 0%,#1E3A5F 55%,#0056B3 100%);color:#fff;padding:44px 24px 40px;text-align:center;position:relative;overflow:hidden;}
+  .header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
+  .header-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:11.5px;font-weight:700;padding:4px 16px;border-radius:20px;margin-bottom:14px;letter-spacing:1.2px;text-transform:uppercase;}
+  .header h1{font-size:clamp(18px,4.5vw,28px);font-weight:800;letter-spacing:-.5px;line-height:1.3;margin-bottom:10px;}
+  .header-period{font-size:13.5px;color:rgba(255,255,255,.75);}
+  .container{max-width:1280px;margin:0 auto;padding:0 18px;}
+  .section{margin:32px 0;}
+  .section-title{font-size:15px;font-weight:700;color:var(--navy-light);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+  .section-title::before{content:'';display:inline-block;width:4px;height:18px;background:var(--blue);border-radius:2px;}
+  .summary-grid{display:grid;gap:10px;grid-template-columns:1fr;}
+  @media(min-width:768px){.summary-grid{grid-template-columns:repeat(3,1fr);}}
+  .summary-card{background:var(--surface);border-radius:var(--radius-sm);padding:22px 18px;box-shadow:var(--shadow);border-top:3px solid var(--blue);display:flex;flex-direction:column;gap:10px;}
+  .summary-card:nth-child(2){border-top-color:#9B59B6;}
+  .summary-card:nth-child(3){border-top-color:var(--green);}
+  .summary-icon{font-size:28px;}
+  .summary-text{font-size:13.5px;color:var(--navy);line-height:1.75;font-weight:500;}
+  .alert-grid{display:grid;gap:10px;grid-template-columns:1fr;}
+  @media(min-width:600px){.alert-grid{grid-template-columns:1fr 1fr;}}
+  @media(min-width:900px){.alert-grid{grid-template-columns:repeat(4,1fr);}}
+  .alert-card{border-radius:var(--radius-sm);padding:16px;display:flex;align-items:flex-start;gap:12px;}
+  .alert-card.down{background:var(--blue-light);border-left:3px solid var(--blue);}
+  .alert-card.up{background:var(--red-light);border-left:3px solid var(--red);}
+  .alert-card.flat{background:var(--gray-light);border-left:3px solid var(--gray);}
+  .alert-icon{font-size:24px;flex-shrink:0;}
+  .alert-label{font-size:11px;color:var(--gray);font-weight:600;margin-bottom:3px;}
+  .alert-val{font-size:17px;font-weight:800;}
+  .alert-card.down .alert-val{color:var(--blue);}
+  .alert-card.up .alert-val{color:var(--red);}
+  .alert-card.flat .alert-val{color:var(--gray);}
+  .alert-desc{font-size:11.5px;color:var(--gray);margin-top:3px;line-height:1.45;}
+  .kpi-grid{display:grid;gap:12px;grid-template-columns:repeat(2,1fr);}
+  @media(min-width:480px){.kpi-grid{grid-template-columns:repeat(3,1fr);}}
+  @media(min-width:768px){.kpi-grid{grid-template-columns:repeat(4,1fr);}}
+  @media(min-width:1024px){.kpi-grid{grid-template-columns:repeat(5,1fr);}}
+  @media(min-width:1200px){.kpi-grid{grid-template-columns:repeat(6,1fr);}}
+  .kpi-card{background:var(--surface);border-radius:var(--radius);padding:20px 16px 16px;box-shadow:var(--shadow);border-top:3px solid var(--border);transition:transform .2s,box-shadow .2s;}
+  .kpi-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);}
+  .kpi-card.up{border-top-color:var(--red);}
+  .kpi-card.down{border-top-color:var(--blue);}
+  .kpi-card.flat{border-top-color:var(--gray);}
+  .kpi-label{font-size:11px;font-weight:700;color:var(--gray);margin-bottom:7px;text-transform:uppercase;letter-spacing:.3px;}
+  .kpi-value{font-size:clamp(15px,2.8vw,21px);font-weight:800;color:var(--navy);line-height:1.1;margin-bottom:8px;word-break:break-all;}
+  .kpi-sub{font-size:10.5px;color:var(--gray);margin-bottom:7px;}
+  .kpi-wow{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px;}
+  .kpi-wow.up{background:var(--red-light);color:var(--red);}
+  .kpi-wow.down{background:var(--blue-light);color:var(--blue);}
+  .kpi-wow.flat{background:var(--gray-light);color:var(--gray);}
+  .charts-grid{display:grid;gap:16px;grid-template-columns:1fr;}
+  @media(min-width:768px){.charts-grid{grid-template-columns:1fr 1fr;}}
+  @media(min-width:1200px){.charts-grid.three{grid-template-columns:1fr 1fr 1fr;}}
+  .chart-card{background:var(--surface);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);}
+  .chart-card.full{grid-column:1/-1;}
+  .chart-title{font-size:13.5px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:7px;}
+  .chart-title .dot{width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block;}
+  .chart-wrap{position:relative;}
+  .ga4-grid{display:grid;gap:12px;grid-template-columns:repeat(2,1fr);}
+  @media(min-width:480px){.ga4-grid{grid-template-columns:repeat(4,1fr);}}
+  .ga4-card{background:linear-gradient(135deg,#0056B3,#1E3A5F);border-radius:var(--radius-sm);padding:18px 15px;color:#fff;box-shadow:var(--shadow);transition:transform .2s;}
+  .ga4-card:hover{transform:translateY(-2px);}
+  .ga4-label{font-size:11px;color:rgba(255,255,255,.72);margin-bottom:5px;font-weight:600;}
+  .ga4-value{font-size:clamp(14px,2.5vw,20px);font-weight:800;margin-bottom:7px;}
+  .ga4-wow{font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:12px;display:inline-block;}
+  .ga4-wow.up{background:rgba(231,76,60,.3);color:#FF8A80;}
+  .ga4-wow.down{background:rgba(0,86,179,.3);color:#82B1FF;}
+  .ga4-wow.flat{background:rgba(255,255,255,.15);color:rgba(255,255,255,.8);}
+  .search-list{display:flex;flex-direction:column;gap:12px;}
+  .search-item{background:var(--surface);border-radius:var(--radius-sm);padding:15px 16px;box-shadow:var(--shadow);}
+  .search-rank-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+  .medal{font-size:22px;flex-shrink:0;}
+  .search-name{font-size:14px;font-weight:700;color:var(--navy);}
+  .search-pct{font-size:13.5px;font-weight:700;color:var(--blue);margin-left:auto;}
+  .search-bar-bg{height:8px;background:var(--gray-light);border-radius:4px;overflow:hidden;}
+  .search-bar-fill{height:100%;border-radius:4px;}
+  .search-count{font-size:11.5px;color:var(--gray);margin-top:5px;}
+  .funnel-wrap{display:flex;flex-direction:column;align-items:stretch;}
+  .funnel-step{border-radius:var(--radius-sm);padding:15px 18px;margin:0 auto;text-align:center;box-shadow:var(--shadow);transition:transform .2s;}
+  .funnel-step:hover{transform:scale(1.02);}
+  .funnel-step.s1{width:100%;background:linear-gradient(135deg,#1E3A5F,#0056B3);color:#fff;}
+  .funnel-step.s2{width:88%;background:linear-gradient(135deg,#0056B3,#2980B9);color:#fff;margin-top:4px;}
+  .funnel-step.s3{width:76%;background:linear-gradient(135deg,#2980B9,#27AE60);color:#fff;margin-top:4px;}
+  .funnel-label{font-size:12px;font-weight:600;opacity:.85;margin-bottom:4px;}
+  .funnel-val{font-size:21px;font-weight:800;}
+  .funnel-rate{font-size:11px;opacity:.8;margin-top:2px;}
+  .funnel-arrow{text-align:center;color:var(--gray);font-size:18px;line-height:1.5;}
+  .conv-list{display:flex;flex-direction:column;gap:10px;}
+  .conv-item{background:var(--surface);border-radius:var(--radius-sm);padding:14px 16px;box-shadow:var(--shadow);}
+  .conv-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+  .conv-rank{width:24px;height:24px;border-radius:50%;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .conv-name{font-size:13.5px;font-weight:700;}
+  .conv-metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;}
+  .conv-metric-label{font-size:10.5px;color:var(--gray);margin-bottom:2px;}
+  .conv-metric-val{font-size:13.5px;font-weight:700;color:var(--navy);}
+  .conv-metric-val.hl{color:var(--red);}
+  .traffic-list{display:flex;flex-direction:column;gap:9px;}
+  .traffic-item{background:var(--surface);border-radius:var(--radius-sm);padding:13px 15px;box-shadow:var(--shadow);display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:12px;}
+  .traffic-source{font-size:12.5px;font-weight:600;color:var(--navy);}
+  .traffic-sessions{font-size:11.5px;color:var(--gray);text-align:right;}
+  .traffic-purchases{font-size:13px;font-weight:700;color:var(--blue);text-align:right;}
+  .traffic-bar-row{grid-column:1/-1;}
+  .traffic-bar-bg{height:6px;background:var(--gray-light);border-radius:3px;overflow:hidden;}
+  .traffic-bar-fill{height:100%;border-radius:3px;background:var(--blue);}
+  .game-reg-grid{display:grid;gap:10px;grid-template-columns:1fr;}
+  @media(min-width:600px){.game-reg-grid{grid-template-columns:repeat(3,1fr);}}
+  .game-reg-card{background:var(--surface);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--shadow);text-align:center;border-top:3px solid var(--blue);}
+  .game-reg-card:nth-child(2){border-top-color:#9B59B6;}
+  .game-reg-card:nth-child(3){border-top-color:var(--green);}
+  .game-reg-name{font-size:13px;font-weight:700;margin-bottom:8px;}
+  .game-reg-count{font-size:22px;font-weight:800;color:var(--blue);margin-bottom:4px;}
+  .game-reg-amount{font-size:12px;color:var(--gray);}
+  .task-cols{display:grid;gap:14px;grid-template-columns:1fr;}
+  @media(min-width:768px){.task-cols{grid-template-columns:1fr 1fr;}}
+  .task-box{background:var(--surface);border-radius:var(--radius-sm);padding:20px;box-shadow:var(--shadow);}
+  .task-box-title{font-size:13.5px;font-weight:700;color:var(--navy-light);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+  .task-group{margin-bottom:10px;}
+  .task-group-title{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:5px;}
+  .task-item{font-size:12px;color:var(--gray);padding:4px 0 4px 10px;border-left:2px solid var(--border);margin-bottom:2px;line-height:1.6;}
+  .task-sub{font-size:11.5px;color:var(--gray);padding:2px 0 2px 20px;margin-bottom:2px;line-height:1.5;margin-left:8px;}
+  .footer{text-align:center;padding:26px;font-size:12px;color:var(--gray);background:var(--surface);border-top:1px solid var(--border);margin-top:40px;}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-badge">📊 Weekly Marketing Report</div>
+  <h1>2026년 47주차<br>아이템매니아 마케팅 코어 인덱스</h1>
+  <p class="header-period">📅 2026.11.16 ~ 2026.11.22</p>
+</div>
+<div class="container">
+  <div class="section">
+    <div class="section-title">핵심 요약 · Summary</div>
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-icon">💹</div>
+        <div class="summary-text">1. 전체 지표 및 시장 흐름<br>조회수·체류시간·로그인수 증가와 GSC CTR 상승으로 사이트 이용 활성도 및 자연 검색 클릭 효율이 개선되었습니다.<br>반면, 총사용자수와 가입자수가 감소하며 사용자 유입 및 신규 회원 확보 측면에서는 다소 둔화된 흐름을 보였습니다.<br><br>거래 시장은 거래건수·거래금액 및 거래 참여자 수가 동반 증가하며 전반적인 거래 활성도가 개선되었습니다.<br>특히, 거래건수 증가율이 거래금액 증가율을 상회하고 평균 거래단가는 하락해, 거래금액보다 거래건수 중심의 성장세가 나타났습니다.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon">📈</div>
+        <div class="summary-text">2. 게임별 거래 동향<br>주요 게임의 신규 시즌 및 콘텐츠 업데이트 영향으로 아이템·게임머니 거래가 활성화되며 전체 거래 규모가 확대되었습니다.<br>메이플스토리·패스오브엑자일·서든어택이 거래 성장을 견인한 반면, 아이온2는 운영 정책 변화 및 서버 이전 등의 영향으로 거래가 감소한 것으로 분석됩니다.<br><br>상승 및 거래 활성화 게임<br> - 패스오브엑자일 : 신규 리그 ‘움브라의 마녀단’ 개막에 따른 캐릭터 육성·장비 제작 수요 확대와 파밍 환경 및 보상 개선 영향으로 게임머니와 아이템 거래가 크게 증가한 것으로 판단됨.<br> - 서든어택 : 11월 19일 신규 마이건2 Eon 무기 출시 및 세트 효과에 따른 무기 확보·성장 관련 SP 수요 확대가 거래건수 감소에도 불구하고 거래금액 증가에 영향을 미친 것으로 추정됨.<br> - 디아블로2:레저렉션 : 11월 14일 래더 16시즌 개막에 따른 초기 룬·장비 수요 확대와 30주년 기념 ‘공포의 유산’ 이벤트를 통한 파밍 환경 개선이 아이템 거래건수 및 거래금액 증가에 영향을 미친 것으로 판단됨.<br> - 메이플스토리 : 11월 19일 결정석 판매 한도 개편 및 필드 메소 획득 제한 강화에 따른 공급 구조 변화와 미라클 타임·콜라보 메소샵 관련 성장 및 소비 수요가 게임머니와 아이템 거래 증가에 영향을 미친 것으로 판단됨.<br><br>조정 및 품목별 변화 게임<br> - 아이온2 : 11월 18일 신뢰도 시스템 도입 및 현금거래 재화 회수 정책 예고와 무료 서버 이전·클래스 밸런스 조정에 따른 거래 위축 및 관망 심리가 게임머니와 아이템 거래 감소에 영향을 미친 것으로 추정됨.<br> - 리니지클래식 : 시즌2 ‘트리아’ 업데이트를 앞둔 관망세와 아데나 시세 약세, 가을 사냥제에 따른 재화 자체 수급 영향으로 게임머니 거래는 감소한 반면, 아덴 서버 최초 공성전 및 서버 이전 종료에 따른 장비 수요로 아이템 거래는 증가한 것으로 추정됨.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon">🚀</div>
+        <div class="summary-text">3. SEO 및 자연 검색 성과<br>전주 동일 평일 대비 자연 검색 클릭수(+3.04%), CTR(35.25%, +1.26%p) 및 평균 검색 순위가 개선되었으며, 브랜드 키워드는 높은 CTR과 상위 노출을 유지하며 안정적인 검색 유입을 확보하고 있습니다.<br><br>캐릭터 카테고리의 검색 노출이 확대(+31.9%)되었으며, 캐릭터 및 일부 게임머니 거래 페이지는 클릭 효율 측면에서 주요 개선 대상으로 확인됩니다.<br>주요 랜딩 페이지의 메타태그·검색 스니펫 최적화와 동적 URL의 색인 및 중복 페이지 점검을 통해 비브랜드 검색 유입 확대를 추진할 필요가 있습니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📌 주요 변동 지표</div>
+    <div class="alert-grid">
+      <div class="alert-card up">
+        <div class="alert-icon">🛒</div>
+        <div>
+          <div class="alert-label">거래건수</div>
+          <div class="alert-val">▲ 21.41%</div>
+          <div class="alert-desc">80,686 → 97,957<br>변동</div>
+        </div>
+      </div>
+      <div class="alert-card up">
+        <div class="alert-icon">🛍️</div>
+        <div>
+          <div class="alert-label">구매자</div>
+          <div class="alert-val">▲ 11.68%</div>
+          <div class="alert-desc">28,103 → 31,385<br>변동</div>
+        </div>
+      </div>
+      <div class="alert-card down">
+        <div class="alert-icon">🏷️</div>
+        <div>
+          <div class="alert-label">평단가</div>
+          <div class="alert-val">▼ 12.65%</div>
+          <div class="alert-desc">150,410 → 131,383<br>변동</div>
+        </div>
+      </div>
+      <div class="alert-card down">
+        <div class="alert-icon">📝</div>
+        <div>
+          <div class="alert-label">가입자수</div>
+          <div class="alert-val">▼ 6.99%</div>
+          <div class="alert-desc">2,347 → 2,183<br>변동</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">핵심 KPI (26년 47주 vs 26년 46주)</div>
+    <div class="kpi-grid">
+      <div class="kpi-card up">
+        <div class="kpi-label">조회수 (PV)</div>
+        <div class="kpi-value">28,020,445</div>
+        <div class="kpi-sub">전주: 25,521,247</div>
+        <span class="kpi-wow up">▲ 9.79%</span>
+      </div>
+      <div class="kpi-card down">
+        <div class="kpi-label">총사용자 (UV)</div>
+        <div class="kpi-value">789,194</div>
+        <div class="kpi-sub">전주: 796,642</div>
+        <span class="kpi-wow down">▼ 0.93%</span>
+      </div>
+      <div class="kpi-card up">
+        <div class="kpi-label">체류시간 (DT)</div>
+        <div class="kpi-value">12분 29초</div>
+        <div class="kpi-sub">전주: 12분 15초</div>
+        <span class="kpi-wow up">▲ 1.90%</span>
+      </div>
+      <div class="kpi-card up">
+        <div class="kpi-label">로그인수</div>
+        <div class="kpi-value">137,293</div>
+        <div class="kpi-sub">전주: 136,256</div>
+        <span class="kpi-wow up">▲ 0.76%</span>
+      </div>
+      <div class="kpi-card down">
+        <div class="kpi-label">가입자수</div>
+        <div class="kpi-value">2,183</div>
+        <div class="kpi-sub">전주: 2,347</div>
+        <span class="kpi-wow down">▼ 6.99%</span>
+      </div>
+      <div class="kpi-card up">
+        <div class="kpi-label">GSC CTR</div>
+        <div class="kpi-value">35.25%</div>
+        <div class="kpi-sub">전주: 33.99%</div>
+        <span class="kpi-wow up">▲ 3.72%</span>
+      </div>
+      <div class="kpi-card up">
+        <div class="kpi-label">거래건수</div>
+        <div class="kpi-value">97,957</div>
+        <div class="kpi-sub">전주: 80,686</div>
+        <span class="kpi-wow up">▲ 21.41%</span>
+      </div>
+      <div class="kpi-card up">
+        <div class="kpi-label">거래금액</div>
+        <div class="kpi-value">128.7억</div>
+        <div class="kpi-sub">전주: 121.4억</div>
+        <span class="kpi-wow up">▲ 6.05%</span>
+      </div>
+      <div class="kpi-card down">
+        <div class="kpi-label">평단가</div>
+        <div class="kpi-value">131,383원</div>
+        <div class="kpi-sub">전주: 150,410원</div>
+        <span class="kpi-wow down">▼ 12.65%</span>
+      </div>
+      <div class="kpi-card up">
+        <div class="kpi-label">거래자(UV)</div>
+        <div class="kpi-value">57,897</div>
+        <div class="kpi-sub">전주: 55,200</div>
+        <span class="kpi-wow up">▲ 4.89%</span>
+      </div>
+      <div class="kpi-card up">
+        <div class="kpi-label">판매자</div>
+        <div class="kpi-value">30,075</div>
+        <div class="kpi-sub">전주: 29,866</div>
+        <span class="kpi-wow up">▲ 0.70%</span>
+      </div>
+      <div class="kpi-card up">
+        <div class="kpi-label">구매자</div>
+        <div class="kpi-value">31,385</div>
+        <div class="kpi-sub">전주: 28,103</div>
+        <span class="kpi-wow up">▲ 11.68%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">거래 트렌드 (12주)</div>
+    <div class="charts-grid">
+      <div class="chart-card full">
+        <div class="chart-title"><span class="dot"></span>카테고리별 거래금액 추이 (단위: 억원)</div>
+        <div class="chart-wrap" style="height:290px"><canvas id="trendChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot"></span>GSC 클릭수 &amp; 노출수 추이</div>
+        <div class="chart-wrap" style="height:230px"><canvas id="gscChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot"></span>GSC CTR 추이 (%)</div>
+        <div class="chart-wrap" style="height:230px"><canvas id="ctrChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">GA4 리포트 (26년 47주 WoW)</div>
+    <div class="ga4-grid">
+      <div class="ga4-card">
+        <div class="ga4-label">총사용자</div>
+        <div class="ga4-value">789,194</div>
+        <span class="ga4-wow down">▼ 0.93%</span>
+      </div>
+      <div class="ga4-card">
+        <div class="ga4-label">활성화사용자</div>
+        <div class="ga4-value">445,926</div>
+        <span class="ga4-wow down">▼ 2.14%</span>
+      </div>
+      <div class="ga4-card">
+        <div class="ga4-label">세션수</div>
+        <div class="ga4-value">1,559,951</div>
+        <span class="ga4-wow up">▲ 0.15%</span>
+      </div>
+      <div class="ga4-card">
+        <div class="ga4-label">조회수</div>
+        <div class="ga4-value">28,020,445</div>
+        <span class="ga4-wow up">▲ 9.79%</span>
+      </div>
+      <div class="ga4-card">
+        <div class="ga4-label">스크롤 진행율</div>
+        <div class="ga4-value">56.99%</div>
+        <span class="ga4-wow up">▲ 2.00%</span>
+      </div>
+      <div class="ga4-card">
+        <div class="ga4-label">게임 검색수</div>
+        <div class="ga4-value">5,784,811</div>
+        <span class="ga4-wow up">▲ 6.55%</span>
+      </div>
+      <div class="ga4-card">
+        <div class="ga4-label">판매등록수</div>
+        <div class="ga4-value">124,590</div>
+        <span class="ga4-wow up">▲ 4.17%</span>
+      </div>
+      <div class="ga4-card">
+        <div class="ga4-label">구매등록수</div>
+        <div class="ga4-value">6,855</div>
+        <span class="ga4-wow up">▲ 5.80%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="charts-grid three">
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot"></span>연령 분포 (활성화사용자)</div>
+        <div class="chart-wrap" style="height:230px"><canvas id="ageChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot"></span>게임 검색 Top 3</div>
+        <div class="search-list">
+          <div class="search-item">
+            <div class="search-rank-row">
+              <span class="medal">🥇</span>
+              <span class="search-name">아이온2</span>
+              <span class="search-pct">12.43%</span>
+            </div>
+            <div class="search-bar-bg">
+              <div class="search-bar-fill" style="width:100.0%;background:linear-gradient(90deg,#FFD700,#FFA500)"></div>
+            </div>
+            <div class="search-count">719,269건</div>
+          </div>
+          <div class="search-item">
+            <div class="search-rank-row">
+              <span class="medal">🥈</span>
+              <span class="search-name">메이플스토리월드</span>
+              <span class="search-pct">10.19%</span>
+            </div>
+            <div class="search-bar-bg">
+              <div class="search-bar-fill" style="width:81.9%;background:linear-gradient(90deg,#C0C0C0,#A0A0A0)"></div>
+            </div>
+            <div class="search-count">589,234건</div>
+          </div>
+          <div class="search-item">
+            <div class="search-rank-row">
+              <span class="medal">🥉</span>
+              <span class="search-name">디아블로2:레저렉션</span>
+              <span class="search-pct">9.19%</span>
+            </div>
+            <div class="search-bar-bg">
+              <div class="search-bar-fill" style="width:73.9%;background:linear-gradient(90deg,#CD7F32,#B87333)"></div>
+            </div>
+            <div class="search-count">531,690건</div>
+          </div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot"></span>전체 구매 퍼널</div>
+        <div class="funnel-wrap">
+          <div class="funnel-step s1"><div class="funnel-label">👁 조회된 상품</div><div class="funnel-val">1,034,204</div><div class="funnel-rate">100%</div></div>
+          <div class="funnel-arrow">▼</div>
+          <div class="funnel-step s2"><div class="funnel-label">💳 결제된 상품</div><div class="funnel-val">86,324</div><div class="funnel-rate">전환율 8.35%</div></div>
+          <div class="funnel-arrow">▼</div>
+          <div class="funnel-step s3"><div class="funnel-label">✅ 구매된 상품</div><div class="funnel-val">90,047</div><div class="funnel-rate">전환율 8.71%</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">구매 전환 Top 3</div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot"></span>조회 → 결제 → 구매</div>
+        <div class="chart-wrap" style="height:230px"><canvas id="convChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot"></span>전환율 상세</div>
+        <div class="conv-list">
+          <div class="conv-item">
+            <div class="conv-header">
+              <div class="conv-rank" style="background:var(--blue)">1</div>
+              <div class="conv-name">메이플스토리</div>
+            </div>
+            <div class="conv-metric-row">
+              <div><div class="conv-metric-label">조회</div><div class="conv-metric-val">34,380</div></div>
+              <div><div class="conv-metric-label">결제 (19.44%)</div><div class="conv-metric-val">6,683</div></div>
+              <div><div class="conv-metric-label">구매전환</div><div class="conv-metric-val hl">20.22%</div></div>
+            </div>
+          </div>
+          <div class="conv-item">
+            <div class="conv-header">
+              <div class="conv-rank" style="background:#9B59B6">2</div>
+              <div class="conv-name">로스트아크</div>
+            </div>
+            <div class="conv-metric-row">
+              <div><div class="conv-metric-label">조회</div><div class="conv-metric-val">15,917</div></div>
+              <div><div class="conv-metric-label">결제 (16.49%)</div><div class="conv-metric-val">2,625</div></div>
+              <div><div class="conv-metric-label">구매전환</div><div class="conv-metric-val hl">19.52%</div></div>
+            </div>
+          </div>
+          <div class="conv-item">
+            <div class="conv-header">
+              <div class="conv-rank" style="background:var(--green)">3</div>
+              <div class="conv-name">도깨비의세계</div>
+            </div>
+            <div class="conv-metric-row">
+              <div><div class="conv-metric-label">조회</div><div class="conv-metric-val">45,410</div></div>
+              <div><div class="conv-metric-label">결제 (17.73%)</div><div class="conv-metric-val">8,050</div></div>
+              <div><div class="conv-metric-label">구매전환</div><div class="conv-metric-val hl">17.75%</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">유입 채널 Top 5</div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="traffic-list">
+          <div class="traffic-item">
+            <div class="traffic-source">(direct) / (none)</div>
+            <div class="traffic-sessions">993,037 세션</div>
+            <div class="traffic-purchases">58,592 구매</div>
+            <div class="traffic-bar-row">
+              <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:100.0%"></div></div>
+            </div>
+          </div>
+          <div class="traffic-item">
+            <div class="traffic-source">google / organic</div>
+            <div class="traffic-sessions">134,749 세션</div>
+            <div class="traffic-purchases">13,697 구매</div>
+            <div class="traffic-bar-row">
+              <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:13.6%"></div></div>
+            </div>
+          </div>
+          <div class="traffic-item">
+            <div class="traffic-source">m.search.naver.com / referral</div>
+            <div class="traffic-sessions">79,344 세션</div>
+            <div class="traffic-purchases">3,224 구매</div>
+            <div class="traffic-bar-row">
+              <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:8.0%"></div></div>
+            </div>
+          </div>
+          <div class="traffic-item">
+            <div class="traffic-source">naver / organic</div>
+            <div class="traffic-sessions">73,952 세션</div>
+            <div class="traffic-purchases">10,462 구매</div>
+            <div class="traffic-bar-row">
+              <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:7.4%"></div></div>
+            </div>
+          </div>
+          <div class="traffic-item">
+            <div class="traffic-source">bing / organic</div>
+            <div class="traffic-sessions">20,943 세션</div>
+            <div class="traffic-purchases">3,468 구매</div>
+            <div class="traffic-bar-row">
+              <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:2.1%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot"></span>종류별 등록 구성</div>
+        <div class="chart-wrap" style="height:260px"><canvas id="regTypeChart"></canvas></div>
+        <div style="margin-top:12px;font-size:12px;line-height:1.8;color:var(--gray)">
+🎮 게임머니+큐나: <strong>74,785건</strong> | 90.0억원<br>
+🎮 아이템: <strong>44,016건</strong> | 116.6억원<br>
+🎮 계정: <strong>7,754건</strong> | 2.8억원<br>
+🎮 기타: <strong>4,890건</strong> | 72.3억원<br>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">게임 등록 Top 3</div>
+    <div class="game-reg-grid">
+      <div class="game-reg-card">
+        <div class="game-reg-name">디아블로2:레저렉션</div>
+        <div class="game-reg-count">31,019</div>
+        <div class="game-reg-amount">19.0억원</div>
+      </div>
+      <div class="game-reg-card">
+        <div class="game-reg-name">도깨비의세계</div>
+        <div class="game-reg-count">17,083</div>
+        <div class="game-reg-amount">12.6억원</div>
+      </div>
+      <div class="game-reg-card">
+        <div class="game-reg-name">아이온2</div>
+        <div class="game-reg-count">12,319</div>
+        <div class="game-reg-amount">18.9억원</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">업무 현황</div>
+    <div class="task-cols">
+      <div class="task-box">
+        <div class="task-box-title">✅ 전주 진행 업무 (W46)</div>
+<div class="task-item">1. 콘텐츠 및 채널 운영</div>
+<div class="task-item">- 블로그(185), 티스토리(35), 커뮤니티(89) 포스팅 완료</div>
+<div class="task-item">- X(10) 게시글 및 유튜브(13)·인스타그램(13) 영상 업로드 완료</div>
+<div class="task-item">- 바이럴 서포터즈 2기 게시글 3건·댓글 43건 활동</div>
+<div class="task-item">2. SEO 및 데이터 분석</div>
+<div class="task-item">- 템빨:오버기어드 상품리스트 페이지 SEO 태그 수정·FAQ 추가 및 테스트 완료(11.20)</div>
+<div class="task-item">- 아이온2 신뢰도 도입에 따른 거래량 변화 예측·보고(11.18)</div>
+<div class="task-item">- 회사소개사이트(itemmania.net) 배너 수정(11.17)</div>
+<div class="task-item">3. 광고 및 프로모션 운영</div>
+<div class="task-item">- 아이엠키워드 광고 연장(11.17)</div>
+<div class="task-item">- 템빨:오버기어드 오픈 이벤트 외부 광고 배너 콘셉트 시안 작성 및 제작 요청(11.18)</div>
+<div class="task-item">- 케이엔터 ‘더 템플루언서’ 이벤트 리뉴얼 기획안 수정 및 개발 요청(11.19)</div>
+<div class="task-item">- G-STAR 2026 B2B 부스 연계 프로모션 진행(11.19~11.21)</div>
+<div class="task-item">4. 제휴 및 계약 운영</div>
+<div class="task-item">- 쌀먹닷컴 거래순위·시세 연동 제휴 협의안 승인 및 발송(11.16), 광고비 등 추가 협의 필요로 일시 중단(11.18)</div>
+      </div>
+      <div class="task-box">
+        <div class="task-box-title">📋 금주 예정 업무 (W47)</div>
+<div class="task-group"><div class="task-group-title">1. CRM 및 마케팅 전략</div></div>
+<div class="task-sub">- 직거래 이용자 자사 유입 전략 수립 예정(핵심 타깃 세분화 및 맞춤형 유입 유도)</div>
+<div class="task-sub">- 휴면 회원 대상 로그인 유도 LMS 발송 예정</div>
+<div class="task-sub">- 전체 회원 대상 템빨:오버기어드 오픈 이벤트 DM 발송 예정</div>
+<div class="task-group"><div class="task-group-title">2. 광고 및 제휴 운영</div></div>
+<div class="task-sub">- 깨비지지 사이트·도깨비의 세계 통합 디스코드 광고 집행 시작 예정</div>
+<div class="task-sub">- 도깨비지지 광고 계약 체결 및 배너 제작 완료 예정</div>
+<div class="task-sub">- 템빨:오버기어드 광고 배너 제작 완료 후 담당자 전달 예정</div>
+<div class="task-group"><div class="task-group-title">3. 프로모션 및 계약 운영</div></div>
+<div class="task-sub">- 케이엔터 ‘더 템플루언서’ 이벤트 리뉴얼 기안 상신 예정</div>
+<div class="task-sub">- 디팟(DPOT) 마일리지 쿠폰 공급 계약서 작성 및 정산 방식 확인 예정</div>
+<div class="task-sub">- NMP PC방(포레런처) 연간 광고 계약 기안서 작성 예정</div>
+<div class="task-group"><div class="task-group-title">4. 콘텐츠 및 채널 운영</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="footer">2026년 47주차 아이템매니아 마케팅 코어 인덱스 &nbsp;|&nbsp; 기간: 2026.11.16 ~ 2026.11.22 &nbsp;|&nbsp; 생성일: 2026.11.24 &nbsp;|&nbsp; 2026-47w-1 기준 · Summary 3영역 &nbsp;|&nbsp; CONFIDENTIAL</div>
+<script>
+Chart.defaults.font.family="'Pretendard',-apple-system,sans-serif";
+Chart.defaults.font.size=11;
+Chart.defaults.color='#6C757D';
+const weeks=["26년36주", "26년37주", "26년38주", "26년39주", "26년40주", "26년41주", "26년42주", "26년43주", "26년44주", "26년45주", "26년46주", "26년47주"];
+new Chart(document.getElementById('trendChart'), {
+  type:'line',
+  data:{labels:weeks,datasets:[
+    {label:'게임머니(억)',data:[103.8, 98.9, 100.1, 103.6, 102.7, 97.8, 92.4, 93.1, 99.6, 83.6, 87.2, 90.3],borderColor:'#0056B3',backgroundColor:'rgba(0,86,179,.06)',pointBackgroundColor:'#0056B3',borderWidth:2.5,pointRadius:3,tension:.4,fill:true},
+    {label:'아이템(억)',data:[18.2, 16.0, 19.7, 23.6, 23.0, 23.3, 17.5, 21.6, 17.0, 16.9, 20.1, 25.6],borderColor:'#E74C3C',backgroundColor:'rgba(231,76,60,.05)',pointBackgroundColor:'#E74C3C',borderWidth:2.5,pointRadius:3,tension:.4,fill:true},
+    {label:'계정(억)',data:[5.73, 5.62, 5.12, 5.31, 5.55, 5.48, 5.83, 5.07, 5.87, 5.76, 5.7, 5.71],borderColor:'#27AE60',backgroundColor:'rgba(39,174,96,.05)',pointBackgroundColor:'#27AE60',borderWidth:2,pointRadius:3,tension:.4,fill:true},
+    {label:'기타(억)',data:[15.1, 12.8, 11.3, 11.9, 10.1, 7.0, 10.3, 9.9, 17.2, 13.2, 8.4, 7.1],borderColor:'#9B59B6',backgroundColor:'rgba(155,89,182,.05)',pointBackgroundColor:'#9B59B6',borderWidth:2,pointRadius:3,tension:.4,fill:true}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{padding:16,usePointStyle:true}}},scales:{x:{grid:{color:'rgba(0,0,0,.04)'},ticks:{maxRotation:30}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:function(v){return v+'억';}}}}}
+});
+new Chart(document.getElementById('gscChart'), {
+  type:'bar',
+  data:{labels:["26년43주", "26년44주", "26년45주", "26년46주", "26년47주"],datasets:[
+    {label:'클릭수',data:[149773, 156357, 149734, 154761, 113017],backgroundColor:'rgba(0,86,179,.75)',borderRadius:4},
+    {label:'노출수',data:[402149, 423979, 421194, 450025, 320617],backgroundColor:'rgba(0,86,179,.2)',borderRadius:4}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{usePointStyle:true}}},scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(0,0,0,.04)'}}}}
+});
+new Chart(document.getElementById('ctrChart'), {
+  type:'line',
+  data:{labels:weeks,datasets:[{label:'GSC CTR(%)',data:[31.48, 32.78, 34.21, 35.0, 36.09, 35.68, 38.5, 37.24, 36.88, 35.55, 34.39, 35.25],borderColor:'#E74C3C',backgroundColor:'rgba(231,76,60,.08)',borderWidth:2.5,pointBackgroundColor:'#E74C3C',pointRadius:4,tension:.4,fill:true}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(0,0,0,.04)'},ticks:{maxRotation:30}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:function(v){return v+'%';}}}}}
+});
+new Chart(document.getElementById('ageChart'), {
+  type:'doughnut',
+  data:{labels:["18-24", "25-34", "35-44", "45-54", "55-64", "65+"],datasets:[{data:[32.29, 40.17, 13.72, 8.87, 4.17, 0.78],backgroundColor:['#0056B3','#2980B9','#27AE60','#F39C12','#E74C3C','#9B59B6'],borderWidth:2,borderColor:'#fff'}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{padding:10,usePointStyle:true,font:{size:10}}},tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ctx.parsed+'%';}}}}}
+});
+new Chart(document.getElementById('convChart'), {
+  type:'bar',
+  data:{labels:["메이플스토리", "로스트아크", "도깨비의세계"],datasets:[
+    {label:'조회',data:[34380, 15917, 45410],backgroundColor:'rgba(0,86,179,.18)',borderRadius:4},
+    {label:'결제',data:[6683, 2625, 8050],backgroundColor:'rgba(0,86,179,.55)',borderRadius:4},
+    {label:'구매',data:[6953, 3107, 8060],backgroundColor:'#0056B3',borderRadius:4}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{usePointStyle:true}}},scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(0,0,0,.04)'}}}}
+});
+new Chart(document.getElementById('regTypeChart'), {
+  type:'doughnut',
+  data:{labels:["게임머니+큐나", "아이템", "계정", "기타"],datasets:[{data:[74785, 44016, 7754, 4890],backgroundColor:['#0056B3','#E74C3C','#27AE60','#9B59B6'],borderWidth:2,borderColor:'#fff'}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{padding:10,usePointStyle:true,font:{size:10}}},tooltip:{callbacks:{label:function(ctx){return ctx.label+': '+ctx.parsed.toLocaleString()+'건 ('+((ctx.parsed/131445*100).toFixed(1))+'%)';}}}}}
+});
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
